@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Task Board</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 100px 0;
+      font-family: Arial, sans-serif;
+      background: url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1600&q=60') no-repeat center center fixed;
+      background-size: cover;
+      color: black;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: 25px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      color: #222;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input, select {
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    .filter-box {
+      margin: 20px 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .filter-box input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255,255,255,0.9);
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #eee;
+    }
+
+    @media (max-width: 700px) {
+      form {
+        grid-template-columns: 1fr;
+      }
+      .filter-box {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>📋 Task Manager</h1>
+
+    <form id="task-form">
+      <label for="title">Title:</label>
+      <input type="text" id="title" required>
+
+      <label for="description">Description:</label>
+      <input type="text" id="description" required>
+
+      <label for="assignee">Assignee:</label>
+      <input type="text" id="assignee" required>
+
+      <label for="priority">Priority:</label>
+      <select id="priority" required>
+        <option value="P0">P0</option>
+        <option value="P1">P1</option>
+        <option value="P2">P2</option>
+      </select>
+
+      <label for="category">Category:</label>
+      <input type="text" id="category" required>
+
+      <label for="startDate">Start Date:</label>
+      <input type="text" id="startDate" required>
+
+      <label for="endDate">End Date:</label>
+      <input type="text" id="endDate" required>
+
+      <label for="status">Status:</label>
+      <select id="status" required>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <button type="submit">Add Task</button>
+    </form>
+
+    <div class="filter-box">
+      <input type="text" id="filter" placeholder="🔍 Filter by title, description, assignee, or category...">
+      <button onclick="filterTasks()">Filter</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Assignee</th>
+          <th>Priority</th>
+          <th>Category</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="task-list">
+        <!-- Tasks will appear here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const taskList = [];
+
+    document.getElementById('task-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const task = {
+        title: document.getElementById('title').value.trim(),
+        description: document.getElementById('description').value.trim(),
+        assignee: document.getElementById('assignee').value.trim(),
+        priority: document.getElementById('priority').value,
+        category: document.getElementById('category').value.trim(),
+        startDate: document.getElementById('startDate').value.trim(),
+        endDate: document.getElementById('endDate').value.trim(),
+        status: document.getElementById('status').value
+      };
+
+      taskList.push(task);
+      renderTasks(taskList);
+      document.getElementById('task-form').reset();
+    });
+
+    function renderTasks(tasks) {
+      const tbody = document.getElementById('task-list');
+      tbody.innerHTML = '';
+
+      tasks.forEach(task => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${task.title}</td>
+          <td>${task.description}</td>
+          <td>${task.assignee}</td>
+          <td>${task.priority}</td>
+          <td>${task.category}</td>
+          <td>${task.startDate}</td>
+          <td>${task.endDate}</td>
+          <td>${task.status}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function filterTasks() {
+      const keyword = document.getElementById('filter').value.toLowerCase().trim();
+
+      const filtered = taskList.filter(task =>
+        task.title.toLowerCase().includes(keyword) ||
+        task.description.toLowerCase().includes(keyword) ||
+        task.assignee.toLowerCase().includes(keyword) ||
+        task.category.toLowerCase().includes(keyword)
+      );
+
+      renderTasks(filtered);
+    }
+  </script>
+
+</body>
+</html>
